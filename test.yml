@@ -1,0 +1,22 @@
+name: ROS 2 CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up ROS 2
+      uses: ros-tooling/setup-ros@v0.0.23
+      with:
+        distribution: foxy
+    - name: Install dependencies
+      run: sudo apt update && rosdep update && rosdep install --from-paths src --ignore-src -r -y
+    - name: Build
+      run: colcon build
+    - name: Run tests
+      run: colcon test && colcon test-result --verbose
+
